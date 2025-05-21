@@ -1,26 +1,23 @@
-from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.asymmetric import dh
-
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.kdf.hkdf import HKDF
-
+from cryptography.hazmat.backends import default_backend
 
 # генерация параметров
-parameters = dh.generate_parameters(generator=2, key_size=2048, backend=default_backend())
+parameters = dh.generate_parameters(generator=2, key_size=2048, backend=default_backend)
 
-# генерация пары ключей
-"""приватный ключ используется для вычисления публичного ключа и, 
-    в дальнейшем, для генерации общего секретного ключа, который будет 
-    использоваться для шифрования данных"""
-private_key = parameters.generate_private_key()
-public_key = private_key.public_key()
+# генерация ключей для Alice
+alice_private_key = parameters.generate_private_key()
+alice_public_key = alice_private_key.public_key()
+
+# генерация ключей для Bob
+bob_private_key = parameters.generate_private_key()
+bob_public_key = bob_private_key.public_key()
 
 # вычисление общего секретного ключа
-# shared_secret = private_key.exchange(other_public_key)
-# derived_key = HKDF(
-#     algoritm=hashes.SHA256(),
-#     length=32,
-#     salt=None,
-#     info=b'handshake data',
-#     backend=default_backend()
-# ).derive(shared_secret)
+alice_shared_key = alice_private_key.exchange(bob_public_key)
+bob_shared_key = bob_private_key.exchange(alice_public_key)
+
+if alice_shared_key == bob_shared_key:
+    print("Обмен ключами прошел успешно.")
+else:
+    print("Общий секретный ключ не совпадает.")
+
