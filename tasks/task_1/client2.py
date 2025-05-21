@@ -15,7 +15,7 @@ def start_client():
                 print("Отправка команды на завершение работы сервера")
                 client_socket.sendall(message.encode('utf-8'))
                 response = client_socket.recv(1024)
-                # print(f"Ответ от сервера: {response.decode('utf-8')}")
+                print(f"Ответ от сервера: {response.decode('utf-8')}")
                 break
 
             client_socket.sendall(message.encode('utf-8'))
